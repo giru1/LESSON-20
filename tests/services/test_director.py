@@ -1,23 +1,19 @@
-from unittest import mock
-
 import pytest
 
 from service.director import DirectorNotFound
-# from pytest_lazyfixture import lazy_fixture
-
 
 
 @pytest.mark.parametrize(
     'data',
     (
-            {
-                'id': 1,
-                'name': 'test',
-            },
-            {
-                'id': 3,
-                'name': 'test3',
-            },
+        {
+            'id': 1,
+            'name': 'test',
+        },
+        {
+            'id': 3,
+            'name': 'test3',
+        },
     )
 )
 def test_get_one(director_service, data):
@@ -36,19 +32,19 @@ def test_get_one_with_error(director_service):
 @pytest.mark.parametrize(
     'length, data',
     (
-            (
-                    2,
-                    [
-                        {
-                            'id': 1,
-                            'name': 'test',
-                        },
-                        {
-                            'id': 3,
-                            'name': 'test3',
-                        },
-                    ],
-            ),
+        (
+            2,
+            [
+                {
+                    'id': 1,
+                    'name': 'test',
+                },
+                {
+                    'id': 3,
+                    'name': 'test3',
+                },
+            ],
+        ),
     ),
 )
 def test_get_all(director_service, length, data):
@@ -63,16 +59,16 @@ def test_get_all(director_service, length, data):
 @pytest.mark.parametrize(
     'origin_data, modified_data',
     (
-            (
-                    {
-                        'id': 1,
-                        'name': 'test',
-                    },
-                    {
-                        'id': 1,
-                        'name': 'tesdgdgdfgdft3',
-                    },
-            ),
+        (
+            {
+                'id': 1,
+                'name': 'test',
+            },
+            {
+                'id': 1,
+                'name': 'tesdgdgdfgdft3',
+            },
+        ),
     ),
 )
 def test_partially_update(director_service, origin_data, modified_data):
@@ -86,16 +82,16 @@ def test_partially_update(director_service, origin_data, modified_data):
 @pytest.mark.parametrize(
     'origin_data, modified_data',
     (
-            (
-                    {
-                        'id': 1,
-                        'name': 'test',
-                    },
-                    {
-                        'id': 12,
-                        'jghjghj': 'tesdgdgdfgdft3',
-                    },
-            ),
+        (
+            {
+                'id': 1,
+                'name': 'test',
+            },
+            {
+                'id': 12,
+                'jghjghj': 'tesdgdgdfgdft3',
+            },
+        ),
     ),
 )
 def test_partially_update_wrong(director_service, origin_data, modified_data):
@@ -113,5 +109,3 @@ def test_delete(director_service):
 def test_update(director_service):
     director_service.update({})
     director_service.dao.update.assert_called_once_with({})
-
-

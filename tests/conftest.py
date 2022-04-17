@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-# from dao.director import DirectorDAO
+from dao.director import DirectorDAO
 from dao.genre import GenreDAO
 from dao.movie import MovieDAO
 from service.director import DirectorService
