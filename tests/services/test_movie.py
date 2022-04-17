@@ -1,13 +1,15 @@
-import pytest
 from unittest.mock import MagicMock
+
+import pytest
+
 from dao.model.movie import Movie
 from dao.movie import MovieDAO
 from service.movie import MovieService
 
 
 @pytest.fixture()
-def movie_service():
-    movie_dao = MovieDAO(None)
+def movie_dao_fixture():
+    dao = MovieDAO(None)
 
     movie1 = Movie(
         id=1,
@@ -20,7 +22,18 @@ def movie_service():
         director_id=1
     )
 
-    movie_dao.get_one = MagicMock(return_value={
+    movie2 = Movie(
+        id=1,
+        title='Йеллоустоун',
+        description='Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
+        trailer='www.youtube.com/',
+        year=2018,
+        rating=8.6,
+        genre_id=17,
+        director_id=1
+    )
+
+    dao.get_one = MagicMock(return_value={
         'id': 1,
         'title': 'Йеллоустоун',
         'description': 'Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
@@ -31,7 +44,7 @@ def movie_service():
         'director_id': 1
     })
 
-    movie_dao.get_one = MagicMock(return_value=[
+    dao.get_all = MagicMock(return_value=[
             {
                 'id': 1,
                 'title': 'Йеллоустоун',
@@ -51,11 +64,10 @@ def movie_service():
                 'rating': 8.6,
                 'genre_id': 17,
                 'director_id': 1
-            }
-        ]
-    )
+            },
+        ])
 
-    movie_dao.create = MagicMock(return_value={
+    dao.create = MagicMock(return_value={
         'id': 1,
         'title': 'Йеллоустоун 2',
         'description': 'Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
@@ -65,9 +77,9 @@ def movie_service():
         'genre_id': 17,
         'director_id': 1
     })
-    movie_dao.update = MagicMock(return_value={
+    dao.update = MagicMock(return_value={
         'id': 1,
-        'title': 'Йеллоустоун 3',
+        'title': 'new Йеллоустоун',
         'description': '1Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
         'trailer': 'www.youtube.com/1',
         'year': 2022,
@@ -75,15 +87,15 @@ def movie_service():
         'genre_id': 17,
         'director_id': 1
     })
-    movie_dao.delete = MagicMock(return_value={})
+    dao.delete = MagicMock(return_value={})
 
-    return movie_dao
+    return dao
 
 
 class TestMovieService:
     @pytest.fixture(autouse=True)
-    def movie_service(self, movie_dao):
-        self.movie_service = MovieService(dao=movie_dao)
+    def movie_service(self, movie_dao_fixture):
+        self.movie_service = MovieService(dao=movie_dao_fixture)
 
     def test_get_one(self):
         movie = self.movie_service.get_one(1)
@@ -109,5 +121,5 @@ class TestMovieService:
     def test_update(self):
         updated_movie = self.movie_service.update(1)
 
-        assert updated_movie['title'] == 'Йеллоустоун 5'
+        assert updated_movie['title'] == 'new Йеллоустоун'
         assert type(updated_movie) == dict
