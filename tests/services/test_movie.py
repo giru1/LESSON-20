@@ -7,7 +7,7 @@ from service.movie import MovieService
 
 @pytest.fixture()
 def movie_service():
-    dao = MovieDAO(None)
+    movie_dao = MovieDAO(None)
 
     movie1 = Movie(
         id=1,
@@ -20,8 +20,7 @@ def movie_service():
         director_id=1
     )
 
-    dao.get_one = MagicMock(return_value=
-    {
+    movie_dao.get_one = MagicMock(return_value={
         'id': 1,
         'title': 'Йеллоустоун',
         'description': 'Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
@@ -32,8 +31,7 @@ def movie_service():
         'director_id': 1
     })
 
-    dao.get_one = MagicMock(return_value=
-        [
+    movie_dao.get_one = MagicMock(return_value=[
             {
                 'id': 1,
                 'title': 'Йеллоустоун',
@@ -57,7 +55,7 @@ def movie_service():
         ]
     )
 
-    dao.create = MagicMock(return_value={
+    movie_dao.create = MagicMock(return_value={
         'id': 1,
         'title': 'Йеллоустоун 2',
         'description': 'Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
@@ -67,7 +65,7 @@ def movie_service():
         'genre_id': 17,
         'director_id': 1
     })
-    dao.update = MagicMock(return_value={
+    movie_dao.update = MagicMock(return_value={
         'id': 1,
         'title': 'Йеллоустоун 3',
         'description': '1Владелец ранчо пытается сохранить землю своих предков. Кевин Костнер в неовестерне от автора «Ветреной реки»',
@@ -77,21 +75,39 @@ def movie_service():
         'genre_id': 17,
         'director_id': 1
     })
-    dao.delete = MagicMock(return_value={})
+    movie_dao.delete = MagicMock(return_value={})
+
+    return movie_dao
 
 
 class TestMovieService:
+    @pytest.fixture(autouse=True)
+    def movie_service(self, movie_dao):
+        self.movie_service = MovieService(dao=movie_dao)
+
     def test_get_one(self):
-        pass
+        movie = self.movie_service.get_one(1)
+
+        assert movie is not None
+        assert movie.id is not None
 
     def test_get_all(self):
-        pass
+        all_movies = self.movie_service.get_all()
 
-    def test_delete(self):
-        pass
-
-    def test_update(self):
-        pass
+        assert len(all_movies) > 0
+        assert type(all_movies) == list
 
     def test_create(self):
-        pass
+        movie_new = self.movie_service.create(1)
+
+        assert movie_new is not None
+        assert type(movie_new) == dict
+
+    def test_delete(self):
+        self.movie_service.delete(1)
+
+    def test_update(self):
+        updated_movie = self.movie_service.update(1)
+
+        assert updated_movie['title'] == 'Йеллоустоун 5'
+        assert type(updated_movie) == dict
